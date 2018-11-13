@@ -5,17 +5,23 @@ import System.Environment
 
 main = do
     args <- getArgs
-    putStrLn ("IP: " ++ (args !! 0) ++ " " ++ (args !! 1))
-    putStrLn ("Netmask: " ++ (slashIntToMask (slashStringToInt (args !! 1))))
-    putStrLn ("Number of host addresses: " ++ 
-        (show (numOfHostAddresses (args !! 1))))
-    putStrLn ("Network address: " ++ (networkAddress (args !! 0) (args !! 1)))
-    putStrLn ("First host address: " ++ 
-        (firstHostAddress (args !! 0) (args !! 1)))
-    putStrLn ("Last host address: " ++ 
-        (lastHostAddress (args !! 0) (args !! 1)))
-    putStrLn ("Broadcast address: " ++ 
-        (broadcastAddress (args !! 0) (args !! 1)))
+    if not (validIp (args !! 0)) || not (validSlash (args !! 1)) 
+    then do
+        putStrLn "Invalid IP or slash!"
+    else do
+        putStrLn ("IP: " ++ (args !! 0) ++ " " ++ (args !! 1))
+        putStrLn ("Netmask: " ++
+            (slashIntToMask (slashStringToInt (args !! 1))))
+        putStrLn ("Number of host addresses: " ++ 
+            (show (numOfHostAddresses (args !! 1))))
+        putStrLn ("Network address: " ++
+            (networkAddress (args !! 0) (args !! 1)))
+        putStrLn ("First host address: " ++ 
+            (firstHostAddress (args !! 0) (args !! 1)))
+        putStrLn ("Last host address: " ++ 
+            (lastHostAddress (args !! 0) (args !! 1)))
+        putStrLn ("Broadcast address: " ++ 
+            (broadcastAddress (args !! 0) (args !! 1)))
 
 
 binToDec :: String -> Int
@@ -131,3 +137,12 @@ numOfHostAddresses slash = 2^(32-s)-2
 
 
 
+validIp :: String -> Bool
+validIp ip = (4 == sum [ 1 | x <- xs, (0 <= x), (x <= 255) ])
+    where 
+        xs = ipDecToInts ip
+
+validSlash :: String -> Bool
+validSlash slash = (0 <= n) && (n <= 32)
+    where
+        n = slashStringToInt slash
