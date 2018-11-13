@@ -60,10 +60,6 @@ ipBinListToDec bins = intercalate "." (map (show . binToDec) bins)
 
 
 
-takeExtendWithNeg n xs
-    | n < 0 = take 0 xs
-    | otherwise = take n xs
-
 slashStringToInt :: String -> Int
 slashStringToInt ('/':cs) = read cs :: Int
 
@@ -72,7 +68,7 @@ slashIntToInts 32 = take 4 (repeat 255)
 slashIntToInts n =
     ((take q (repeat 255)) ++ 
     [binToDec (rpadBinToEight (replicate r '1'))] ++ 
-    (takeExtendWithNeg (3-q) (repeat 0)))
+    (take (3-q) (repeat 0)))
     where   r = n `mod` 8
             q = n `div` 8
 
