@@ -12,3 +12,5 @@ e.g.
 
 
     ./subnet 192.168.0.0 /28
+## Screenshot
+![screenshot](https://github.com/lakosd/subnet/screenshot.png)
