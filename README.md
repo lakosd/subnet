@@ -1,7 +1,7 @@
 # Haskell Subnet Calculator
 A simplistic terminal program for subnetting calculations, written in Haskell.
 ## Features
-- 32 bit netmask format
+- Dot-decimal netmask format
 - Network and broadcast address
 - Number of host addresses
 - First and last host address
