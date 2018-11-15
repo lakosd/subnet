@@ -24,10 +24,14 @@ main = do
             (broadcastAddress (args !! 0) (args !! 1)))
 
 
+
+-- takes a binary, returns decimal integer
 binToDec :: String -> Int
 binToDec xs = sum (zipWith (*) (reverse intxs) [ 2^n | n <- [0..] ])
-    where intxs = map digitToInt xs
+    where
+        intxs = map digitToInt xs
 
+-- takes a decimal integer, returns binary
 decToBin :: Int -> String
 decToBin 0 = ['0']
 decToBin x = reverse (decToBinHelper x)
@@ -38,54 +42,66 @@ decToBinHelper x
     | x `mod` 2 == 0 = '0' : (decToBinHelper (x `div` 2))
     | x `mod` 2 == 1 = '1' : (decToBinHelper (x `div` 2))
 
+-- takes a string of an integer, returns Int
 stringToInt :: String -> Int
 stringToInt = (\x -> read x :: Int)
 
 
 
+-- e.g. "1011" -> "10110000"
 rpadBinToEight :: String -> String
 rpadBinToEight binary = binary ++ (replicate n '0')
-    where n = 8 - length binary
+    where
+        n = 8 - length binary
 
+-- e.g. "1011" -> "00001011"
 lpadBinToEight :: String -> String
 lpadBinToEight binary = (replicate n '0') ++ binary
-    where n = 8 - length binary
+    where
+        n = 8 - length binary
 
+-- takes dot-decimal string, returns list of Ints
 ipDecToInts :: String -> [Int]
 ipDecToInts ip = map stringToInt (splitOn "." ip)
 
+-- takes dot-decimal string, returns list of binaries
 ipDecToBinList :: String -> [String]
 ipDecToBinList ip = map (lpadBinToEight . decToBin) (ipDecToInts ip)
 
-ipDecToBin :: String -> String
-ipDecToBin ip = intercalate "." (ipDecToBinList ip)
-
-
+-- takes list of binaries, returns dot-decimal string
 ipBinListToDec :: [String] -> String
 ipBinListToDec bins = intercalate "." (map (show . binToDec) bins)
 
 
 
+-- e.g. "/30" -> 30
 slashStringToInt :: String -> Int
 slashStringToInt ('/':cs) = read cs :: Int
 
+-- takes an Int, returns Ints of dot-decimal format of netmask
+-- e.g. 30 -> [255, 255, 255, 252]
 slashIntToInts :: Int -> [Int]
 slashIntToInts 32 = take 4 (repeat 255)
 slashIntToInts n =
     ((take q (repeat 255)) ++ 
     [binToDec (rpadBinToEight (replicate r '1'))] ++ 
     (take (3-q) (repeat 0)))
-    where   r = n `mod` 8
-            q = n `div` 8
+    where 
+        r = n `mod` 8
+        q = n `div` 8
 
+-- takes an Int, returns dot-decimal format of netmask
+-- e.g. 30 -> "255.255.255.252"
 slashIntToMask :: Int -> String
 slashIntToMask n = intercalate "." (map show (slashIntToInts n))
 
 
 
+-- changes all bits from n+1 to 8 to "0"
 allZerosRight :: Int -> String -> String
 allZerosRight n bin = (take n bin) ++ (take (8-n) (repeat '0'))
 
+-- changes all bits from n+1 to 8 to "1"
 allOnesRight :: Int -> String -> String
 allOnesRight n bin = (take n bin) ++ (take (8-n) (repeat '1'))
 
